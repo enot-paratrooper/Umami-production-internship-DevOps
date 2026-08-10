@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy-and-smoke:
+    name: Deploy from scratch + smoke test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Show environment
+        run: |
+          docker --version
+          docker compose version
+          git --version
+
+      # setup.sh сам клонирует umami (v3.2.0), генерирует .env, собирает и запускает стек.
+      - name: Run setup.sh (clean deploy)
+        run: sh setup.sh
+
+      - name: Show running containers
+        if: always()
+        run: docker compose ps
+
+      # Функциональные проверки эндпоинтов.
+      - name: Run smoke_test.sh
+        run: sh smoke_test.sh
+
+      # Диагностика при падении.
+      - name: Dump logs on failure
+        if: failure()
+        run: docker compose logs --tail 100
+
+      - name: Tear down
+        if: always()
+        run: docker compose down -v --remove-orphans
