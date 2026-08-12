@@ -1,0 +1,45 @@
+umami_websites:
+  query: "SELECT count(*)::float AS total FROM website WHERE deleted_at IS NULL"
+  master: true
+  metrics:
+    - total:
+        usage: "GAUGE"
+        description: "Количество отслеживаемых сайтов"
+
+umami_sessions:
+  query: "SELECT count(*)::float AS total FROM session"
+  master: true
+  metrics:
+    - total:
+        usage: "GAUGE"
+        description: "Всего сессий (уникальных посетителей)"
+
+umami_events:
+  query: >
+    SELECT
+      count(*)::float AS total,
+      count(*) FILTER (WHERE event_type = 1)::float AS pageviews,
+      count(*) FILTER (WHERE event_type = 2)::float AS custom_events
+    FROM website_event
+  master: true
+  metrics:
+    - total:
+        usage: "GAUGE"
+        description: "Всего событий (просмотры + кастомные)"
+    - pageviews:
+        usage: "GAUGE"
+        description: "Всего просмотров страниц"
+    - custom_events:
+        usage: "GAUGE"
+        description: "Всего кастомных событий"
+
+umami_events_last_hour:
+  query: >
+    SELECT count(*)::float AS total
+    FROM website_event
+    WHERE created_at > now() - interval '1 hour'
+  master: true
+  metrics:
+    - total:
+        usage: "GAUGE"
+        description: "События за последний час"
