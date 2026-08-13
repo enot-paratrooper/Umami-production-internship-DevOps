@@ -1,0 +1,80 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "graphTooltip": 0,
+  "title": "Umami — Business",
+  "uid": "umami-business",
+  "schemaVersion": 39,
+  "tags": ["umami", "business"],
+  "time": { "from": "now-6h", "to": "now" },
+  "refresh": "30s",
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Отслеживаемые сайты",
+      "gridPos": { "h": 6, "w": 6, "x": 0, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [ { "expr": "umami_websites_total", "refId": "A" } ]
+    },
+    {
+      "type": "stat",
+      "title": "Всего сессий",
+      "gridPos": { "h": 6, "w": 6, "x": 6, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [ { "expr": "umami_sessions_total", "refId": "A" } ]
+    },
+    {
+      "type": "stat",
+      "title": "Просмотры страниц",
+      "gridPos": { "h": 6, "w": 6, "x": 12, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [ { "expr": "umami_events_pageviews", "refId": "A" } ]
+    },
+    {
+      "type": "stat",
+      "title": "События за последний час",
+      "gridPos": { "h": 6, "w": 6, "x": 18, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [ { "expr": "umami_events_last_hour_total", "refId": "A" } ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Динамика событий (rate)",
+      "gridPos": { "h": 9, "w": 12, "x": 0, "y": 6 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        { "expr": "rate(umami_events_total[5m])", "legendFormat": "events/s", "refId": "A" },
+        { "expr": "rate(umami_events_pageviews[5m])", "legendFormat": "pageviews/s", "refId": "B" }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Время ответа эндпоинтов (blackbox, сек)",
+      "gridPos": { "h": 9, "w": 12, "x": 12, "y": 6 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": { "defaults": { "unit": "s" } },
+      "targets": [
+        { "expr": "probe_duration_seconds", "legendFormat": "{{instance}}", "refId": "A" }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Соединения с БД PostgreSQL",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 15 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        { "expr": "pg_stat_database_numbackends{datname=\"umami\"}", "legendFormat": "active connections", "refId": "A" }
+      ]
+    }
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "DS_PROMETHEUS",
+        "type": "datasource",
+        "query": "prometheus",
+        "current": { "text": "Prometheus", "value": "Prometheus" }
+      }
+    ]
+  }
+}
