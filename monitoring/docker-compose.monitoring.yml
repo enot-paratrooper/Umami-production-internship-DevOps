@@ -57,7 +57,7 @@ services:
       - --path.rootfs=/host
     pid: host
     volumes:
-      - /:/host:ro,rslave
+      - /:/host:ro
     ports:
       - "9100:9100"
     mem_limit: 128m
