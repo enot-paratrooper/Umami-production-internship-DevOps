@@ -1,6 +1,6 @@
 # Журнал работы с ИИ (ai-log.md)
 
-## 2026-07-12
+## 2026-08-12
 **Запрос:** Проанализируй текущий Dockerfile и docker-compose.yml проекта umami
 (тег v3.2.0), определи, что нужно доработать под требования (multi-stage,
 non-root, минимальный образ, лимиты ресурсов, .env).
@@ -18,7 +18,7 @@ non-root, минимальный образ, лимиты ресурсов, .env
 
 ---
 
-## 2026-07-12
+## 2026-08-12
 **Запрос:** Напиши setup.sh для развёртывания с нуля (клон upstream по тегу,
 генерация .env, build, up, ожидание БД, тестовые данные, проверка).
 
@@ -31,7 +31,7 @@ non-root, минимальный образ, лимиты ресурсов, .env
 
 ---
 
-## 2026-07-12
+## 2026-08-12
 **Запрос:** Как в sh надёжно извлечь token и website id из JSON-ответа umami
 без jq (его может не быть на чистой машине)?
 
@@ -44,7 +44,7 @@ non-root, минимальный образ, лимиты ресурсов, .env
 
 ---
 
-## 2026-07-12
+## 2026-08-12
 **Запрос:** Umami не отдаёт /metrics — как собрать бизнес-метрики для Prometheus?
 
 **Результат:** LLM подтвердил отсутствие встроенного /metrics и предложил три
@@ -56,3 +56,19 @@ umami-exporter (читает БД), либо blackbox_exporter для HTTP-до�
 доступности/времени ответа. Написал pg-queries.yaml по схеме v3.x
 (website / session / website_event, event_type 1=pageview, 2=event). Проверил
 имена таблиц по документации и схеме prisma.
+
+---
+
+## 2026-08-23
+**Запрос:** Ошибка при запуске node-exporter в WSL:
+Error response from daemon: path / is mounted on / but it is not a shared or slave mount. Как исправить?
+
+**Результат:** LLM подтвердил отсутствие встроенного /metrics и предложил три
+пути: postgres_exporter с custom-queries по таблицам umami, отдельный
+umami-exporter (читает БД), либо blackbox_exporter для HTTP-доступности.LLM объяснил,
+что в WSL 2 корневая файловая система по умолчанию смонтирована с типом распространения private, 
+тогда как node-exporter требует shared или slave для бинд-монтирования / в /host. Предложил решение:
+Убрать опцию rslave из тома в docker-compose.monitoring.yml:
+заменить - /:/host:ro,rslave на - /:/host:ro.
+
+**Действие:** отредактировал monitoring/docker-compose.monitoring.yml, убрал ,rslave из volumes, перезапустил стек.

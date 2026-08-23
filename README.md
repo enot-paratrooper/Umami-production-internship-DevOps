@@ -41,3 +41,20 @@ BASE_URL=http://localhost:3000 sh smoke_test.sh
 Проверка падения CI: временно указать неверный пароль БД (например, сломать
 `DATABASE_URL` в compose или подменить `POSTGRES_PASSWORD`) — пайплайн станет
 красным на шаге ожидания приложения. Скриншот приложить в отчёт.
+
+## Мониторинг и логи
+
+Запуск вместе с основным стеком:
+
+```sh
+docker compose -f docker-compose.yml -f monitoring/docker-compose.monitoring.yml up -d
+```
+
+- Grafana: <http://localhost:3001> (`admin` / `admin`) — дашборды Health, Business
+  и Logs провижинятся автоматически.
+- Prometheus: <http://localhost:9090>
+- Метрики: node-exporter (хост), cAdvisor (контейнеры), postgres-exporter
+  (БД + бизнес-метрики umami), blackbox-exporter (доступность/латентность HTTP).
+- Логи: Loki + Promtail. Готовый лог-вьювер — дашборд **Umami — Logs**
+  (папка Umami): панель с реальными записями контейнеров + фильтр по контейнеру.
+  Ad-hoc — через Grafana → Explore → Loki, запрос `{container="umami-app"}`.
