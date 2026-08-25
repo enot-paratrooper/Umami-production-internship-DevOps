@@ -45,7 +45,7 @@
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
       "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "targets": [
-        { "expr": "sum(rate(container_cpu_usage_seconds_total{name=~\"umami-app|umami-db\"}[5m])) by (name)", "legendFormat": "{{name}}", "refId": "A" }
+        { "expr": "sum(rate(container_cpu_usage_seconds_total{container_label_com_docker_compose_service=~\"umami|db\"}[5m])) by (container_label_com_docker_compose_service)", "legendFormat": "{{container_label_com_docker_compose_service}}", "refId": "A" }
       ]
     },
     {
@@ -54,7 +54,7 @@
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
       "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "targets": [
-        { "expr": "container_memory_usage_bytes{name=~\"umami-app|umami-db\"}", "legendFormat": "{{name}}", "refId": "A" }
+        { "expr": "sum(container_memory_usage_bytes{container_label_com_docker_compose_service=~\"umami|db\"}) by (container_label_com_docker_compose_service)", "legendFormat": "{{container_label_com_docker_compose_service}}", "refId": "A" }
       ]
     },
     {
