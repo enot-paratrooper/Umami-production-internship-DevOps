@@ -1,70 +1,175 @@
 {
-  "annotations": { "list": [] },
+  "annotations": {
+    "list": []
+  },
   "editable": true,
   "graphTooltip": 0,
   "title": "Umami — Health",
   "uid": "umami-health",
   "schemaVersion": 39,
-  "tags": ["umami", "health"],
-  "time": { "from": "now-6h", "to": "now" },
+  "tags": [
+    "umami",
+    "health"
+  ],
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
   "refresh": "30s",
   "panels": [
     {
       "type": "stat",
       "title": "Доступность эндпоинтов (blackbox)",
-      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 0 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "fieldConfig": { "defaults": { "mappings": [
-        { "type": "value", "options": { "0": { "text": "DOWN", "color": "red" }, "1": { "text": "UP", "color": "green" } } }
-      ] } },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "DOWN",
+                  "color": "red"
+                },
+                "1": {
+                  "text": "UP",
+                  "color": "green"
+                }
+              }
+            }
+          ]
+        }
+      },
       "targets": [
-        { "expr": "probe_success", "legendFormat": "{{instance}}", "refId": "A" }
+        {
+          "expr": "probe_success",
+          "legendFormat": "{{instance}}",
+          "refId": "A"
+        }
       ]
     },
     {
       "type": "timeseries",
       "title": "CPU хоста (%)",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "targets": [
-        { "expr": "100 - (avg(rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)", "legendFormat": "CPU used %", "refId": "A" }
+        {
+          "expr": "100 - (avg(rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+          "legendFormat": "CPU used %",
+          "refId": "A"
+        }
       ]
     },
     {
       "type": "timeseries",
       "title": "RAM хоста (используется, %)",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "targets": [
-        { "expr": "(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100", "legendFormat": "RAM used %", "refId": "A" }
+        {
+          "expr": "(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100",
+          "legendFormat": "RAM used %",
+          "refId": "A"
+        }
       ]
     },
     {
       "type": "timeseries",
       "title": "CPU по контейнерам (cAdvisor)",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "targets": [
-        { "expr": "sum(rate(container_cpu_usage_seconds_total{container_label_com_docker_compose_service=~\"umami|db\"}[5m])) by (container_label_com_docker_compose_service)", "legendFormat": "{{container_label_com_docker_compose_service}}", "refId": "A" }
+        {
+          "expr": "sum(rate(container_cpu_usage_seconds_total{container_label_com_docker_compose_service=~\"umami|db\"}[5m])) by (container_label_com_docker_compose_service)",
+          "legendFormat": "{{container_label_com_docker_compose_service}}",
+          "refId": "A"
+        }
       ]
     },
     {
       "type": "timeseries",
       "title": "RAM по контейнерам (cAdvisor)",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 16
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "targets": [
-        { "expr": "sum(container_memory_usage_bytes{container_label_com_docker_compose_service=~\"umami|db\"}) by (container_label_com_docker_compose_service)", "legendFormat": "{{container_label_com_docker_compose_service}}", "refId": "A" }
-      ]
+        {
+          "expr": "sum(container_memory_usage_bytes{container_label_com_docker_compose_service=~\"umami|db\"}) by (container_label_com_docker_compose_service)",
+          "legendFormat": "{{container_label_com_docker_compose_service}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes(IEC)"
+        }
+      }
     },
     {
       "type": "stat",
       "title": "Uptime хоста",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "fieldConfig": { "defaults": { "unit": "s" } },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 16
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s"
+        }
+      },
       "targets": [
-        { "expr": "node_time_seconds - node_boot_time_seconds", "legendFormat": "uptime", "refId": "A" }
+        {
+          "expr": "node_time_seconds - node_boot_time_seconds",
+          "legendFormat": "uptime",
+          "refId": "A"
+        }
       ]
     }
   ],
@@ -74,7 +179,10 @@
         "name": "DS_PROMETHEUS",
         "type": "datasource",
         "query": "prometheus",
-        "current": { "text": "Prometheus", "value": "Prometheus" }
+        "current": {
+          "text": "Prometheus",
+          "value": "Prometheus"
+        }
       }
     ]
   }
